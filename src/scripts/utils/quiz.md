@@ -3179,8 +3179,6 @@ ReferenceErrors генерируется, когда JavaScript не может 
 ###### 100. Какое значение будет на выходе?
 
 ```javascript
-// 🎉✨ This is my 100th question! ✨🎉
-
 const output = `${[] && 'Im'}possible!
 You should${'' && `n't`} see a therapist after so much JavaScript lol`
 ```

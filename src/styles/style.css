@@ -1,43 +1,79 @@
 * {
   box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;  
 }
 
+@font-face {
+    font-family: "Roboto";
+    src: local("Roboto"), 
+         local("Roboto-Regular"), 
+         url("/assets/fonts/roboto-regular.woff2") format("woff2");
+  }
+
 body{
+  font-family: Roboto, sans-serif;
     padding: 0;
     margin: 0;
-    height: 100dvh;
 }
 
 
 .app__wrapper{
     position: relative;
     display: flex;
-    flex-flow: column wrap;
+    flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
-    gap: 10px;
     min-height: 400px;
-    min-width: 320px;
-    height: 100%;
+    min-width: 365px;
     border: 1px solid red;
 }
 
 .header{
     border: 1px solid hotpink;
     grid-area: head;
+    min-width: 100%;
+    text-align: center;
+    letter-spacing: .2rem;
 }
+
 
 .main{
     border: 1px solid blue;
     grid-area: main;
+    min-width: 100%;
 }
 
 .quiz-wrapper{
-    padding: 0 20px;
+    font-size: 1.2rem;
+    word-break:break-word;
+    line-height: 25px;
+    color: #3c4043;
+    background-color: #F5F1EC;;
 }
 
 .footer{
     border: 1px solid green;
     grid-area: footer;
 }
+
+/* .question{
+    background-color: rgba(75, 209, 164, 0.589);
+    padding: 10px;
+}
+
+.question-js-code{
+    background-color: rgba(233, 233, 233, 0.76);
+    padding: 10px;
+}
+
+.answer-variants{
+    background-color: rgba(62, 122, 179, 0.527);
+    padding: 10px;
+}
+
+.answer{
+    background-color: rgba(75, 209, 104, 0.589);
+    padding: 10px;
+} */
+ .question, .question-js-code, .answer-variants, .answer{
+    padding: 0.70rem;
+ }
