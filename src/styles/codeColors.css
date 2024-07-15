@@ -1,0 +1,27 @@
+:root{
+    --var-color: #07a;
+    --func-name-color: #dd4a68;
+    --operator-color: #a67f59;
+    --string-color: #690;
+    --keyword-color: #bd2cbd;
+}
+
+.variable{
+    color: var(--var-color);
+}
+
+.function{
+    color: var(--func-name-color)
+}
+
+.string{
+    color: var(--string-color);
+}
+
+.operator{
+    color: var(--operator-color);
+}
+
+.keyword{
+    color: var(--keyword-color);
+}
