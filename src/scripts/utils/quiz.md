@@ -1721,9 +1721,7 @@ console.log(set);
 // counter.js
 let counter = 10;
 export default counter;
-```
 
-```javascript
 // index.js
 import myCounter from './counter';
 
@@ -2074,12 +2072,12 @@ class Labrador extends Dog {
 ###### 67. Какой будет вывод?
 
 ```javascript
-// index.js
+// index.js 
 console.log('running index.js');
 import { sum } from './sum.js';
 console.log(sum(1, 2));
 
-// sum.js
+// sum.js 
 console.log('running sum.js');
 export const sum = (a, b) => a + b;
 ```
@@ -2184,7 +2182,7 @@ console.log("🥑" + "💻");
 function* startGame() {
   const answer = yield 'Do you love JavaScript?';
   if (answer !== 'Yes') {
-    return 'Oh wow... Guess we're gone here';
+    return "Oh wow... Guess we're gone here";
   }
   return 'JavaScript loves you back ❤️';
 }

@@ -30,14 +30,14 @@ async function getLocalQuizData(){
         } 
         
     }
-    // let count = 1
+    let count = 1
     // setInterval(() => {
     //     main.innerHTML = ''
     //     generateQuizQuestion(arr, count)
     //     count++
-    // }, 3000);
+    // }, 3500);
 
-    generateQuizQuestion(arr, 32)
+    generateQuizQuestion(arr, 100)
 }
 
 getLocalQuizData()
@@ -65,8 +65,8 @@ function generateQuizQuestion(arr, num){
     questionJsCode.tabIndex = 0
     const jsCode = document.createElement('pre')
     jsCode.classList.add('js-code')
-    jsCode.innerText = arr[num][0][1]
-
+    jsCode.textContent = arr[num][0][1]
+    // console.log(jsCode.textContent)
 
     if(arr[num][0][1]){
         questionJsCode.append(jsCode)
@@ -141,7 +141,6 @@ function generateQuizQuestion(arr, num){
         delBr(elem)
     }
     if(questionJsCode.childElementCount > 0){
-        console.log(jsCode)
         for(let [key, value] of regexMap()){
             checkString(jsCode, value, key)
         }
