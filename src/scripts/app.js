@@ -4,7 +4,7 @@ import { copyIcon } from "./utils/svg.js"
 import { regexMap } from "./utils/colorRegex.js"
 
 const main = document.querySelector('.main')
-
+const nextBtn = document.getElementById('next-q-btn')
 
 async function getLocalQuizData(){
     let arr = []
@@ -30,18 +30,33 @@ async function getLocalQuizData(){
         } 
         
     }
-    let count = 1
+    arr.shift()
+    // let count = 1
     // setInterval(() => {
     //     main.innerHTML = ''
     //     generateQuizQuestion(arr, count)
     //     count++
     // }, 3500);
-
-    generateQuizQuestion(arr, 100)
+    let lessonArr = []
+    let count = 0
+    // Swap elements in Array v2
+    for (let i = arr.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
+    
+        // swap elements array[i] and array[j]
+        // we use "destructuring assignment" syntax to achieve that
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    lessonArr = arr.slice(0, 15)
+    generateQuizQuestion(arr, count)
+    nextBtn.addEventListener('click', () => {
+        count++
+        main.innerHTML = ''
+        generateQuizQuestion(arr, count)
+    })
 }
 
 getLocalQuizData()
-
 
 
 function generateQuizQuestion(arr, num){
