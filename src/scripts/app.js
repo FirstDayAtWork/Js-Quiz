@@ -38,6 +38,7 @@ async function getLocalQuizData(){
     //     count++
     // }, 3500);
     let lessonArr = []
+    let numOfQuestions = 15
     let count = 0
     // Swap elements in Array v2
     for (let i = arr.length - 1; i > 0; i--) {
@@ -47,12 +48,16 @@ async function getLocalQuizData(){
         // we use "destructuring assignment" syntax to achieve that
         [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-    lessonArr = arr.slice(0, 15)
-    generateQuizQuestion(arr, count)
+    lessonArr = arr.slice(0, numOfQuestions)
+    generateQuizQuestion(lessonArr, count)
     nextBtn.addEventListener('click', () => {
-        count++
         main.innerHTML = ''
-        generateQuizQuestion(arr, count)
+        if(count >= numOfQuestions-1){
+            console.log("it\s over!", count)
+            return
+        }
+        count++
+        generateQuizQuestion(lessonArr, count)
     })
 }
 
