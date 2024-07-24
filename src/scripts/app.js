@@ -8,7 +8,7 @@ const nextBtn = document.getElementById('next-q-btn')
 
 async function getLocalQuizData(){
     let arr = []
-    const response = await fetch('./src/scripts/utils/quiz.md', {
+    const response = await fetch('./Js-Quiz/src/scripts/utils/quiz.md', {
     })
     const data = await response.text()
     arr = data.split`---`
