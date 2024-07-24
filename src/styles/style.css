@@ -7,7 +7,7 @@
     src: local("Roboto"), 
          local("Roboto-Regular"),
          local("Roboto-bold"),
-         url("/assets/fonts/roboto-regular.woff2") format("woff2");
+         url("./assets/fonts/roboto-regular.woff2") format("woff2");
   }
 
 body{
