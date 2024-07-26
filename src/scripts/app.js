@@ -5,6 +5,7 @@ import { regexMap } from "./utils/colorRegex.js"
 
 const main = document.querySelector('.main')
 const nextBtn = document.getElementById('next-q-btn')
+const questionCounter = document.querySelector('.question-counter')
 
 async function getLocalQuizData(){
     let arr = []
@@ -27,44 +28,65 @@ async function getLocalQuizData(){
             } else {
                 arr[i][0] = arr[i][0].split(/```/g)
             }
+            arr[i][2] = arr[i][1].slice(8, 9)
         } 
         
     }
     arr.shift()
-    // let count = 1
-    // setInterval(() => {
-    //     main.innerHTML = ''
-    //     generateQuizQuestion(arr, count)
-    //     count++
-    // }, 3500);
+    return arr
+}
+
+
+async function startQuiz(){
+    let arr = await getLocalQuizData()
     let lessonArr = []
     let numOfQuestions = 15
     let count = 0
+    let userScoreArr = []
+    let res = 0
     // Swap elements in Array v2
     for (let i = arr.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
-    
-        // swap elements array[i] and array[j]
-        // we use "destructuring assignment" syntax to achieve that
+        let j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     lessonArr = arr.slice(0, numOfQuestions)
-    generateQuizQuestion(lessonArr, count)
+    generateQuizQuestion(lessonArr, count, userScoreArr)
     nextBtn.addEventListener('click', () => {
-        main.innerHTML = ''
-        if(count >= numOfQuestions-1){
-            console.log("it\s over!", count)
-            return
+        const inputs = document.querySelectorAll('.answer-style')
+        for(const elem of inputs){
+            // do something when input is checked
+            if(elem.checked){
+                main.innerHTML = ''
+                if(count >= numOfQuestions-1){
+                    res = userScoreArr.reduce((a, b) => a + b, 0)
+                    main.innerHTML = `
+                    <div class="result-wrapper">
+                        <div class="result">Result: 
+                            <div class="result-score">${res} / ${numOfQuestions}</div>
+                        </div>
+                        <button class="btn-style" id="restart-btn" type="button">Restart</button>
+                    </div>
+                    `
+                    const restartBtn = document.getElementById('restart-btn')
+                    restartBtn.addEventListener('click', () => {
+                        location.reload()
+                    })
+                    questionCounter.innerText = `? / ?`
+                    console.log("it\s over!", res)
+                    return
+                }
+                count++
+                questionCounter.innerText = `${count+1} / ${numOfQuestions}`
+                generateQuizQuestion(lessonArr, count, userScoreArr)
+                return
+            }
         }
-        count++
-        generateQuizQuestion(lessonArr, count)
     })
 }
 
-getLocalQuizData()
+startQuiz()
 
-
-function generateQuizQuestion(arr, num){
+function generateQuizQuestion(arr, num, userScoreArr){
     // Example
     // <div class="question"><p>${arr[num][0][0]}</p></div>
     // <div class="question-js-code"><p>${arr[num][0][1]}</p></div>
@@ -124,6 +146,7 @@ function generateQuizQuestion(arr, num){
         const label = document.createElement('label')
         answerInputWrapper.append(input)
         answerInputWrapper.tabIndex = '0'
+        answerInputWrapper.ariaDisabled = 'false'
         input.classList.add('answer-style')
         input.id = `answer-${i}`
         input.type = 'radio'
@@ -131,7 +154,7 @@ function generateQuizQuestion(arr, num){
         input.value = i;
         input.setAttribute('data-abc', alphabet[i])
         label.htmlFor = input.id
-        label.innerText = answerArr[i]
+        label.innerHTML = `<code>${answerArr[i]}</code>`
         answerInputWrapper.append(label)
         answerVariants.append(answerInputWrapper)
     }
@@ -139,6 +162,7 @@ function generateQuizQuestion(arr, num){
 
     const details = document.createElement('details')
     details.classList.add('answer')
+    details.classList.add('answer-off')
 
     const summary = document.createElement('summary')
     const b = document.createElement('b')
@@ -167,6 +191,34 @@ function generateQuizQuestion(arr, num){
     }
     main.append(div)
     copySomeCode(arr[num][0][1].trim())
+
+    // add click to inputs
+
+    const rightAnswer = arr[num][2]
+    const inputs = document.querySelectorAll('.answer-style')
+    inputs.forEach(el => el.addEventListener('change', (e) => {
+        if(el.parentElement.ariaDisabled === 'true'){
+            console.log(el, el.ariaDisabled)
+            return
+        }
+        for (const elem of inputs) {
+            if(elem === e.target){
+                continue
+            }
+            elem.parentElement.ariaDisabled = 'true'
+            elem.disabled = 'true'
+        }
+        userScoreArr.push(+(e.target.dataset.abc === rightAnswer))
+        details.classList.toggle('answer-off')
+            if(e.target.dataset.abc !== rightAnswer){
+                e.target.parentElement.classList.add('wrong-answer')
+                return
+            }
+            e.target.parentElement.classList.add('right-answer')
+            return
+        })
+    )
+
     // scroll to answer / back to question
     details.addEventListener("toggle", (event) => {
         if (details.open) {

@@ -6,6 +6,8 @@
     --keyword-color: #bd2cbd;
     --link-color:#690;
     --templateLit-color: #3436bb;
+    --err-color: #ef5350;
+    --succ-color: #4caf50;
 }
 
 .variable{

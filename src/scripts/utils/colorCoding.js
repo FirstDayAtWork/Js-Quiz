@@ -5,7 +5,7 @@ export function checkString(str, regexp, name, htmlTxt){
     if(!!str.textContent.match(regexp)){
         match = [...new Set(str.textContent.match(regexp))]
         match.map(el => {
-            console.log(el)
+            // console.log(el)
             let r_part = el
             let s = ''
             let e = ''
@@ -30,7 +30,7 @@ export function checkString(str, regexp, name, htmlTxt){
                 if(/(?<![a-z])(function|var|let|const|for|while|do|if|else|constructor|true|false|null|undefined|new)\b/g.test(r_part)){
                     return
                 }
-                console.log('funq', r_part)
+                // console.log('funq', r_part)
                 if(/(?<!:)\/\/.+/g.test(r_part)){
                     return
                 }
@@ -52,7 +52,7 @@ export function checkString(str, regexp, name, htmlTxt){
             }
             let r = new RegExp(s+r_part+e, 'gi')
             str.innerHTML = str.innerHTML.trim().replace(r, `<code class=${name}>${el}</code>`) 
-            console.log('r', r, str.innerHTML)
+            // console.log('r', r, str.innerHTML)
         })
     }
 }
