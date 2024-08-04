@@ -3,11 +3,11 @@
 }
 
 @font-face {
-    font-family: "Roboto";
-    src: local("Roboto"), 
-         local("Roboto-Regular"),
-         local("Roboto-bold"),
-         url("./assets/fonts/roboto-regular.woff2") format("woff2");
+    font-family: "Roboto Mono";
+    src: local("Roboto")
+    local("Roboto Mono"),
+         url("./assets/fonts/RobotoMono-Regular.ttf") format("ttf"),
+         url("./assets/fonts/Roboto-Regular.ttf") format("ttf");
   }
 
 body{
@@ -22,6 +22,8 @@ h1{
 }
 
 code, pre{
+    font-size: 15px;
+    font-family: "Roboto Mono", monospace;
     margin:0;
 }
 
@@ -68,7 +70,7 @@ code, pre{
     /* width: 100%; */
     font-size: 20px;
     background-color: rgba(59, 194, 131, 0.87);
-    color: white;
+    color: var(--main-app-font-color);
     letter-spacing: 5px;
     cursor: pointer;
 }
@@ -105,6 +107,8 @@ code, pre{
 
 .answer-input-wrapper{
     display: flex;
+    align-items: center;
+    justify-content: center;
     border: 1px solid #dadce0;
     margin: 5px 0;
     border-radius: 5px;
@@ -122,8 +126,10 @@ label{
 }
 
 .answer-style{
+    height: 40px;
     margin: 0 10px;
     width: 18px;
+    accent-color: #3c4043;;
 }
 
  .question, .question-js-code, .answer-variants, .answer{

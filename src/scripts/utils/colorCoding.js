@@ -1,8 +1,9 @@
 
 
-export function checkString(str, regexp, name, htmlTxt){
+export function checkString(str, regexp, name){
     let match = []
     if(!!str.textContent.match(regexp)){
+        const helperegex = /\?|\[|\]|\||\\n|\$|\(|\)|\.|\+|\*|\{|\}|\\/g
         match = [...new Set(str.textContent.match(regexp))]
         match.map(el => {
             // console.log(el)
@@ -16,8 +17,8 @@ export function checkString(str, regexp, name, htmlTxt){
                 
             }
             if(name === 'string' || 'templateLit'){
-                if(!!/\?|\[|\\n|\$|\(|\)|\./g.test(el)){
-                    r_part = el.replace(/\?|\[|\\n|\$|\(|\)|\./g, x => '\\' + x)
+                if(!!helperegex.test(el)){
+                    r_part = el.replace(helperegex, x => '\\' + x)
                 }
                 if(/&/g.test(r_part)){
                     r_part = r_part.replace(/&/g, '&amp;')
@@ -27,10 +28,10 @@ export function checkString(str, regexp, name, htmlTxt){
                 }
             }
             if(name === 'function'){
-                if(/(?<![a-z])(function|var|let|const|for|while|do|if|else|constructor|true|false|null|undefined|new)\b/g.test(r_part)){
+                if(/(?<![a-z])(class|function|var|let|const|for|while|do|if|else|constructor|true|false|null|undefined|new)\b/g.test(r_part)){
                     return
                 }
-                // console.log('funq', r_part)
+                console.log('funq', r_part)
                 if(/(?<!:)\/\/.+/g.test(r_part)){
                     return
                 }
@@ -38,19 +39,18 @@ export function checkString(str, regexp, name, htmlTxt){
                 e = '(?!\\w)'
             }
             if(name === 'variable'){
-                // if(/d/g.test(r_part)){
-                //     return
-                // }
-                s = "(?<!\S*?\'|\"|\`)"
-                e = "(?!\S*?\'|\"|\`)"
+                console.log('xx', r_part, el)
+                s = "(?<=\\s*?|!|\\+)"
+                e = "(?=\\s+?|\\+|;|,)"
             }
             if(name === 'url'){
-                let r = new RegExp(r_part+e, 'gi')
+                let r = new RegExp(r_part+e, 'g')
                 console.log(r)
                 str.innerHTML = str.innerHTML.trim().replace(r, `<code class=${name}><a href="${el}">${el}</a></code>`)
                 return
             }
-            let r = new RegExp(s+r_part+e, 'gi')
+            let r = new RegExp(s+r_part+e, 'g')
+            console.log(r)
             str.innerHTML = str.innerHTML.trim().replace(r, `<code class=${name}>${el}</code>`) 
             // console.log('r', r, str.innerHTML)
         })

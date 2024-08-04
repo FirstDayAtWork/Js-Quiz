@@ -2,6 +2,8 @@ import { checkString } from "./utils/colorCoding.js"
 import { copySomeCode } from "./utils/copyCode.js"
 import { copyIcon } from "./utils/svg.js"
 import { regexMap } from "./utils/colorRegex.js"
+import { mdRegexMap } from "./utils/mdToJsRegex.js"
+import { findMdinTxt } from "./utils/findMdinTxt.js"
 
 const main = document.querySelector('.main')
 const nextBtn = document.getElementById('next-q-btn')
@@ -15,7 +17,7 @@ async function getLocalQuizData(){
     arr = data.split`---`
     .map(el => el.replace('\r\n\r\n', '')
                  .replace('<details><summary><b>Ответ</b></summary>', '')
-                 .replace(/<p>|<\/p>|<\/details>|javascript|html/g, '')
+                 .replace(/<p>|<\/p>|<\/details>/g, '')
                  .split('######').join`` )
     for(let i = 1; i < arr.length; i++){
         if(arr[i].length > 1){
@@ -30,7 +32,13 @@ async function getLocalQuizData(){
             }
             arr[i][2] = arr[i][1].slice(8, 9)
         } 
-        
+        arr[i] = {
+            question: arr[i][0][0],
+            jsCode: arr[i][0][1],
+            variants: arr[i][0][2],
+            answer: arr[i][1],
+            rightAnswer: arr[i][2]
+        }
     }
     arr.shift()
     return arr
@@ -44,6 +52,7 @@ async function startQuiz(){
     let count = 0
     let userScoreArr = []
     let res = 0
+    // generateQuizQuestion(arr, 119, userScoreArr)
     // Swap elements in Array v2
     for (let i = arr.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
@@ -56,7 +65,19 @@ async function startQuiz(){
         for(const elem of inputs){
             // do something when input is checked
             if(elem.checked){
-                main.innerHTML = ''
+                main.innerHTML = `
+                <div class="quiz-wrapper">
+                    <div class="question"></div>
+                    <div class="question-js-code" tabindex="0"></div>
+                    <div class="answer-variants"></div>
+                    <details class="answer answer-off">
+                        <summary class="summary">
+                            <b>Ответ</b>
+                        </summary>
+                        <p class="answer-txt"></p>
+                    </details>
+                </div>
+                `
                 if(count >= numOfQuestions-1){
                     res = userScoreArr.reduce((a, b) => a + b, 0)
                     main.innerHTML = `
@@ -87,33 +108,22 @@ async function startQuiz(){
 startQuiz()
 
 function generateQuizQuestion(arr, num, userScoreArr){
-    // Example
-    // <div class="question"><p>${arr[num][0][0]}</p></div>
-    // <div class="question-js-code"><p>${arr[num][0][1]}</p></div>
-    // <div class="answer-variants"><p>${arr[num][0][2]}</p></div>
-    // <details class="answer">
-    //     <summary><b>Ответ</b></summary>
-    //     <p>${arr[num][1]}</p>
-    // </details>
-    const div = document.createElement('div')
-    div.classList.add('quiz-wrapper')
-
-    const question = document.createElement('div')
-    question.classList.add('question')
-    question.innerText = arr[num][0][0]
-
-    const questionJsCode = document.createElement('div')
-    questionJsCode.classList.add('question-js-code')
-    questionJsCode.tabIndex = 0
+    const quizWrapper = document.querySelector('.quiz-wrapper')
+    const question = document.querySelector('.question')
+    const questionJsCode = document.querySelector('.question-js-code')
+    const answerVariants = document.querySelector('.answer-variants')
+    const details = document.querySelector('.answer')
+    const summary = document.querySelector('.summary')
+    const p = document.querySelector('.answer-txt')
+    question.innerText = arr[num].question
     const jsCode = document.createElement('pre')
     jsCode.classList.add('js-code')
-    jsCode.textContent = arr[num][0][1]
-    // console.log(jsCode.textContent)
+    jsCode.textContent = arr[num].jsCode
 
-    if(arr[num][0][1]){
+    if(arr[num].jsCode){
         questionJsCode.append(jsCode)
         // count rows in js code
-        let rowCountArr = arr[num][0][1].match(/\n/g)
+        let rowCountArr = arr[num].jsCode.match(/\n/g)
         const beforeWrapper = document.createElement('div')
         for(let j = 0; j < rowCountArr.length-1; j++){
             const before = document.createElement('pre')
@@ -134,10 +144,8 @@ function generateQuizQuestion(arr, num, userScoreArr){
         questionJsCode.prepend(copyBtnWrapper)
     }
 
-    const answerVariants = document.createElement('div')
-    answerVariants.classList.add('answer-variants')
     const alphabet = 'abcdefgh'.toUpperCase()
-    let answerArr = arr[num][0][2].split(/- \w:/).map(el => el.trim())
+    let answerArr = arr[num].variants.split(/- \w:/).map(el => el.trim())
     answerArr.shift()
     for(let i = 0; i < answerArr.length; i++){
         const answerInputWrapper = document.createElement('div')
@@ -154,31 +162,12 @@ function generateQuizQuestion(arr, num, userScoreArr){
         input.value = i;
         input.setAttribute('data-abc', alphabet[i])
         label.htmlFor = input.id
-        label.innerHTML = `<code>${answerArr[i]}</code>`
+        label.innerHTML = `<code>${answerArr[i].replace(/[<>]/g, x => x === '<' ? '&lt;' : '&gt;')}</code>`
         answerInputWrapper.append(label)
         answerVariants.append(answerInputWrapper)
     }
 
-
-    const details = document.createElement('details')
-    details.classList.add('answer')
-    details.classList.add('answer-off')
-
-    const summary = document.createElement('summary')
-    const b = document.createElement('b')
-    b.innerText = 'Ответ'
-
-    const p = document.createElement('p')
-    p.classList.add('answer-txt')
-    p.innerText = arr[num][1]
-
-    div.append(question)
-    div.append(questionJsCode)
-    div.append(answerVariants)
-    div.append(details)
-    details.append(summary)
-    summary.append(b)
-    details.append(p)
+    p.innerText = arr[num].answer
 
     let nodes = [question, jsCode, answerVariants, p]
     for(let elem of nodes){
@@ -189,12 +178,14 @@ function generateQuizQuestion(arr, num, userScoreArr){
             checkString(jsCode, value, key)
         }
     }
-    main.append(div)
-    copySomeCode(arr[num][0][1].trim())
+    for(let [key, value] of mdRegexMap()){
+        findMdinTxt(p, value, key)
+    }
+    main.append(quizWrapper)
+    copySomeCode(arr[num].jsCode.trim())
 
     // add click to inputs
-
-    const rightAnswer = arr[num][2]
+    const rightAnswer = arr[num].rightAnswer
     const inputs = document.querySelectorAll('.answer-style')
     inputs.forEach(el => el.addEventListener('change', (e) => {
         if(el.parentElement.ariaDisabled === 'true'){
