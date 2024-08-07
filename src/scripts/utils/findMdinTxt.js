@@ -1,5 +1,5 @@
 export function findMdinTxt(str, regex, name){
-    console.log(regex)
+    // console.log(regex)
     let match = []
     if(!!str.textContent.match(regex)){
         const helperegex = /\?|\[|\]|\||\\n|\$|\(|\)|\.|\+|\*|\{|\}|\\/g
@@ -14,19 +14,16 @@ export function findMdinTxt(str, regex, name){
             if(name === 'emphasis'){
                 if(/_.+?_/g.test(r_part)){
                     el = el.replace(/_/g, '')
-                    console.log('__', el)
                     before = `<i class=${name}>`
                     after = `</i>`
                 }
                 if(/\*\*[\s\S]+?\*\*/g.test(el)){
                     el = el.replace(/\*/g, '')
-                    console.log('**', el)
                     before = `<strong class=${name}>`
                     after = `</strong>`
                 }
                 if(/~~.+?~~/g.test(r_part)){
                     el = el.replace(/~~_/g, '')
-                    console.log('~~', el)
                     before = `<s class=${name}>`
                     after = `</s>`
                 }
@@ -34,7 +31,8 @@ export function findMdinTxt(str, regex, name){
             if(name === 'codeblock'){
                 if(/(?<=`{3})javascript|js/g.test(el)){
                     el = el.replace(/`{3}(?:js|javascript)|`{3}/g, '')
-                    console.log('it worsk???', el)
+                    // console.log('it worsk???', el)
+                    r_part = r_part.replace(/js|javascript/g, x=> x === 'js' ? 'js\\n' : 'javascript\\n')
                     before = `
                     <pre><code class=${name}>`
                     after = `</code></pre>`
@@ -56,7 +54,7 @@ export function findMdinTxt(str, regex, name){
             if(name === 'links'){
                 let txt = el.match(/(?<=\[).+?(?=\])/).join``
                 el = el.replace(/\[.+?\]|[()]/g, '')
-                console.log('link', el)
+                // console.log('link', el)
                 before = `<a href=`
                 after = `>${txt}</a>`
             }
@@ -73,7 +71,7 @@ export function findMdinTxt(str, regex, name){
                 el = el.replace('>', 'referrerpolicy="no-referrer">')
             }
             let r = new RegExp(r_part, 'g')
-            console.log('tada', r, r_part, el)
+            // console.log('tada', r, r_part, el)
             str.innerHTML = str.innerHTML.trim().replace(r, `${before}${el}${after}`)
         })
     }

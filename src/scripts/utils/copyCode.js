@@ -1,10 +1,11 @@
-export function copySomeCode(element){
-    const copyBtn = document?.querySelector('.copy-btn')
+export function copySomeCode(element, counter){
+    const button = document?.getElementById(`copyBtn-${counter}`)
+
     // Copy Pass Into Clipboard
-    copyBtn?.addEventListener('click', addToClipBoard);
+    button?.addEventListener('click', addToClipBoard);
 
     // copy clip on keyboard clicks
-    copyBtn?.addEventListener('keydown', (e) => {
+    button?.addEventListener('keydown', (e) => {
       if(e.code === 'Enter' || e.code === 'NumpadEnter' || e.code === 'Space'){
         e.preventDefault()
         addToClipBoard()
@@ -12,7 +13,6 @@ export function copySomeCode(element){
     })
     
     async function addToClipBoard(e){
-      console.log('click')
         try {
           await navigator.clipboard.writeText(element);
           console.log(("Copied -> " + element));

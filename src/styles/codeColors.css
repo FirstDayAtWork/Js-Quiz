@@ -18,11 +18,11 @@
     --second-app-bg-color: #161b22;
 }
 
-.variable{
+.variable, .tag{
     color: var(--var-color);
 }
 
-.function{
+.function, .attr{
     color: var(--func-name-color)
 }
 
@@ -52,6 +52,19 @@
     padding: .2em .4em;
     border-radius: 6px;
     font-size: 85%;
+}
+
+label:has(.code){
+    .code{
+        font-size: 14px;
+    }
+}
+
+label:is(.wrong-answer), label:is(.right-answer){
+    .code{
+        color: white;
+        background-color: inherit;
+    }
 }
 
 .comment:has(.string){

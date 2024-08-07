@@ -1,9 +1,15 @@
-import { checkString } from "./utils/colorCoding.js"
+import { checkString, checkHtml } from "./utils/colorCoding.js"
+import { setBeforeAndCopyForCodeBlock } from "./utils/beforeAndCopy.js"
 import { copySomeCode } from "./utils/copyCode.js"
 import { copyIcon } from "./utils/svg.js"
-import { regexMap } from "./utils/colorRegex.js"
+import { regexForJs, regexForHtml } from "./utils/colorRegex.js"
 import { mdRegexMap } from "./utils/mdToJsRegex.js"
 import { findMdinTxt } from "./utils/findMdinTxt.js"
+
+/* TO DO
+    - fix event listeners on copy buttons (no events added)
+    - fix codeblock BEFORE wrapper showing wrong number of lines
+*/
 
 const main = document.querySelector('.main')
 const nextBtn = document.getElementById('next-q-btn')
@@ -32,6 +38,9 @@ async function getLocalQuizData(){
             }
             arr[i][2] = arr[i][1].slice(8, 9)
         } 
+        if(!!/```/.test(arr[i][1])){
+            arr[i][1] = arr[i][1].split(/```/g)
+        }
         arr[i] = {
             question: arr[i][0][0],
             jsCode: arr[i][0][1],
@@ -52,7 +61,7 @@ async function startQuiz(){
     let count = 0
     let userScoreArr = []
     let res = 0
-    // generateQuizQuestion(arr, 119, userScoreArr)
+    // generateQuizQuestion(arr, 75, userScoreArr)
     // Swap elements in Array v2
     for (let i = arr.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
@@ -61,6 +70,9 @@ async function startQuiz(){
     lessonArr = arr.slice(0, numOfQuestions)
     generateQuizQuestion(lessonArr, count, userScoreArr)
     nextBtn.addEventListener('click', () => {
+        if(nextBtn.ariaDisabled === 'true'){
+            return 
+        }
         const inputs = document.querySelectorAll('.answer-style')
         for(const elem of inputs){
             // do something when input is checked
@@ -68,7 +80,7 @@ async function startQuiz(){
                 main.innerHTML = `
                 <div class="quiz-wrapper">
                     <div class="question"></div>
-                    <div class="question-js-code" tabindex="0"></div>
+                    <div class="question-js-code js-code-wrapper-style" tabindex="0"></div>
                     <div class="answer-variants"></div>
                     <details class="answer answer-off">
                         <summary class="summary">
@@ -99,6 +111,7 @@ async function startQuiz(){
                 count++
                 questionCounter.innerText = `${count+1} / ${numOfQuestions}`
                 generateQuizQuestion(lessonArr, count, userScoreArr)
+                nextBtn.ariaDisabled = 'true'
                 return
             }
         }
@@ -108,6 +121,7 @@ async function startQuiz(){
 startQuiz()
 
 function generateQuizQuestion(arr, num, userScoreArr){
+    let counter = 0
     const quizWrapper = document.querySelector('.quiz-wrapper')
     const question = document.querySelector('.question')
     const questionJsCode = document.querySelector('.question-js-code')
@@ -118,30 +132,14 @@ function generateQuizQuestion(arr, num, userScoreArr){
     question.innerText = arr[num].question
     const jsCode = document.createElement('pre')
     jsCode.classList.add('js-code')
+    jsCode.classList.add('js-code-style')
     jsCode.textContent = arr[num].jsCode
 
     if(arr[num].jsCode){
         questionJsCode.append(jsCode)
-        // count rows in js code
-        let rowCountArr = arr[num].jsCode.match(/\n/g)
-        const beforeWrapper = document.createElement('div')
-        for(let j = 0; j < rowCountArr.length-1; j++){
-            const before = document.createElement('pre')
-            before.classList.add('before')
-            beforeWrapper.classList.add('before-wrapper')
-            beforeWrapper.append(before)
-            before.innerText = j+1
-        }
-        questionJsCode.prepend(beforeWrapper)
-        
-        const copyBtn = document.createElement('button')
-        const copyBtnWrapper = document.createElement('div')
-        copyBtnWrapper.classList.add('copy-btn-wrapper')
-        copyBtn.type = 'button'
-        copyBtn.classList.add('copy-btn')
-        copyBtn.innerHTML = copyIcon;
-        copyBtnWrapper.append(copyBtn)
-        questionJsCode.prepend(copyBtnWrapper)
+        setBeforeAndCopyForCodeBlock(arr[num].jsCode, questionJsCode, copyIcon, counter)
+        copySomeCode(arr[num].jsCode.trim(), counter)
+        counter=counter+1
     }
 
     const alphabet = 'abcdefgh'.toUpperCase()
@@ -162,27 +160,78 @@ function generateQuizQuestion(arr, num, userScoreArr){
         input.value = i;
         input.setAttribute('data-abc', alphabet[i])
         label.htmlFor = input.id
-        label.innerHTML = `<code>${answerArr[i].replace(/[<>]/g, x => x === '<' ? '&lt;' : '&gt;')}</code>`
+        label.innerHTML = `${answerArr[i].replace(/[<>]/g, x => x === '<' ? '&lt;' : '&gt;')}`
+        findMdinTxt(label, mdRegexMap().get('code'), 'code')
         answerInputWrapper.append(label)
         answerVariants.append(answerInputWrapper)
     }
 
-    p.innerText = arr[num].answer
+    if(Array.isArray(arr[num].answer)){
+        arr[num].answer = arr[num].answer.map(el => {
+            const regMatch = el.match(/^javascript|^js|^html\n/i)
+            if(/javascript|js/i.test(regMatch)){
+                for(let [key, value] of regexForJs()){
+                   el = checkString(el, value, key)
+                }
+                return (`
+                    <div class="answer-code-wrapper js-code-wrapper-style">
+                        <pre class="answer-code js-code-style">${el}</pre>
+                    </div>
+                    `
+                )
+            }
+            if(/html/i.test(regMatch)){
+                for(let [key, value] of regexForHtml()){
+                    el = checkHtml(el, value, key)
+                }
+                return (`
+                    <div class="answer-code-wrapper js-code-wrapper-style">
+                        <pre class="answer-code js-code-style">${el}</pre>
+                    </div>
+                    `
+                )
+            }
+            return `<p>${el}</p>`
+        })
+        arr[num].answer.map(e =>{
+             p.insertAdjacentHTML("beforeend", e)
+        })
+        const answerCodeWrapper = document.querySelectorAll('.answer-code-wrapper')
+        const answerCode = document.querySelectorAll('.answer-code')
+    
+        for(let k = 0; k < answerCode.length; k++){
+            setBeforeAndCopyForCodeBlock(answerCode[k].innerHTML, answerCodeWrapper[k], copyIcon, counter)
+            copySomeCode('SAMPLE', counter)
+            counter=counter+1
+        }
+    } else {
+        p.innerText = arr[num].answer
+    }
+
+
 
     let nodes = [question, jsCode, answerVariants, p]
     for(let elem of nodes){
         delBr(elem)
     }
     if(questionJsCode.childElementCount > 0){
-        for(let [key, value] of regexMap()){
-            checkString(jsCode, value, key)
+        const jsCodeMatch = jsCode.textContent.match(/^(?:javascript|js|html)\n/i)
+        if(/javascript|js/i.test(jsCodeMatch[0])){
+            for(let [key, value] of regexForJs()){
+                checkString(jsCode, value, key)
+            }
+        }
+        if(/html/i.test(jsCodeMatch[0])){
+            for(let [key, value] of regexForHtml()){
+                checkHtml(jsCode, value, key)
+            }
         }
     }
     for(let [key, value] of mdRegexMap()){
         findMdinTxt(p, value, key)
     }
     main.append(quizWrapper)
-    copySomeCode(arr[num].jsCode.trim())
+
 
     // add click to inputs
     const rightAnswer = arr[num].rightAnswer
@@ -199,13 +248,16 @@ function generateQuizQuestion(arr, num, userScoreArr){
             elem.parentElement.ariaDisabled = 'true'
             elem.disabled = 'true'
         }
+        nextBtn.ariaDisabled = 'false'
         userScoreArr.push(+(e.target.dataset.abc === rightAnswer))
         details.classList.toggle('answer-off')
             if(e.target.dataset.abc !== rightAnswer){
                 e.target.parentElement.classList.add('wrong-answer')
+                e.target.nextSibling.classList.add('wrong-answer')
                 return
             }
             e.target.parentElement.classList.add('right-answer')
+            e.target.nextSibling.classList.add('right-answer')
             return
         })
     )

@@ -1,7 +1,62 @@
 
 
-export function checkString(str, regexp, name){
+export function checkString(str, regexp, name, node){
     let match = []
+    // console.log(str)
+    if(!str.innerHTML){
+        str = str.replace(/^javascript|^js|^html\n/i, '')
+        if(!!str.match(regexp)){
+            const helperegex = /\?|\[|\]|\||\\n|\$|\(|\)|\.|\+|\*|\{|\}|\\/g
+            match = [...new Set(str.match(regexp))]
+            match.map(el => {
+                // console.log(el)
+                let r_part = el
+                let s = ''
+                let e = ''
+                if(name === 'comment'){
+                    if(el.includes('//') && el.includes('[')){
+                        r_part = el.replace('[', '\\[')
+                    }
+                    
+                }
+                if(name === 'string' || 'templateLit'){
+                    if(!!helperegex.test(el)){
+                        r_part = el.replace(helperegex, x => '\\' + x)
+                    }
+                    if(/&/g.test(r_part)){
+                        r_part = r_part.replace(/&/g, '&amp;')
+                    }
+                    if(/>/g.test(r_part)){
+                        r_part = r_part.replace(/>/g, '&gt;')
+                    }
+                }
+                if(name === 'function'){
+                    if(/(?<![a-z])(class|function|var|let|const|for|while|do|if|else|constructor|true|false|null|undefined|new)\b/g.test(r_part)){
+                        return
+                    }
+                    if(/(?<!:)\/\/.+/g.test(r_part)){
+                        return
+                    }
+                    s = '(?<!\\w)'
+                    e = '(?!\\w)'
+                }
+                if(name === 'variable'){
+                    s = "(?<=\\s*?|!|\\+)"
+                    e = "(?=\\s+?|\\+|;|,)"
+                }
+                if(name === 'url'){
+                    let r = new RegExp(r_part+e, 'g')
+                    str = str.trim().replace(r, `<code class=${name}><a href="${el}">${el}</a></code>`)
+                    return
+                }
+                let r = new RegExp(s+r_part+e, 'g')
+                str = str.trim().replace(r, `<code class=${name}>${el}</code>`) 
+                // console.log('r', r, str)
+            })
+        }
+        return str
+    }
+    str.innerHTML = str.innerHTML.replace(/^(?:javascript|js|html)\n/i, '')
     if(!!str.textContent.match(regexp)){
         const helperegex = /\?|\[|\]|\||\\n|\$|\(|\)|\.|\+|\*|\{|\}|\\/g
         match = [...new Set(str.textContent.match(regexp))]
@@ -31,7 +86,6 @@ export function checkString(str, regexp, name){
                 if(/(?<![a-z])(class|function|var|let|const|for|while|do|if|else|constructor|true|false|null|undefined|new)\b/g.test(r_part)){
                     return
                 }
-                console.log('funq', r_part)
                 if(/(?<!:)\/\/.+/g.test(r_part)){
                     return
                 }
@@ -39,20 +93,41 @@ export function checkString(str, regexp, name){
                 e = '(?!\\w)'
             }
             if(name === 'variable'){
-                console.log('xx', r_part, el)
                 s = "(?<=\\s*?|!|\\+)"
                 e = "(?=\\s+?|\\+|;|,)"
             }
             if(name === 'url'){
                 let r = new RegExp(r_part+e, 'g')
-                console.log(r)
                 str.innerHTML = str.innerHTML.trim().replace(r, `<code class=${name}><a href="${el}">${el}</a></code>`)
                 return
             }
             let r = new RegExp(s+r_part+e, 'g')
-            console.log(r)
             str.innerHTML = str.innerHTML.trim().replace(r, `<code class=${name}>${el}</code>`) 
             // console.log('r', r, str.innerHTML)
+        })
+    }
+}
+
+
+export function checkHtml(str, regexp, name){
+    let match = []
+    str.innerHTML = str.innerHTML.replace(/^html\n/i, '')
+
+    if(!!str.textContent.match(regexp)){
+        const helperegex = /\?|\[|\]|\||\\n|\$|\(|\)|\.|\+|\*|\{|\}|\\/g
+        match = [...new Set(str.textContent.match(regexp))]
+        match.map(el => {
+            let r_part = el
+            let s = ''
+            let e = ''
+            if(!!helperegex.test(el)){
+                r_part = el.replace(helperegex, x => '\\' + x)
+            }
+            if(name === 'tag'){
+                e = "(?!\'|\"|\\w)"
+            }
+            let r = new RegExp(s+r_part+e, 'g')
+            str.innerHTML = str.innerHTML.trim().replace(r, `<code class=${name}>${el}</code>`) 
         })
     }
 }

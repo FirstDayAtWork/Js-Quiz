@@ -1,4 +1,5 @@
-export const regexMap = () => {
+// javascript
+export const regexForJs = () => {
     const r = new Map()
     .set('comment', /(?<!:)\/\/.+/g)
     .set('variable', /(?<![a-z])(class|function|var|let|const|for|while|do|if|else|constructor|true|false|null|undefined|new)\b(?!\S*?')/g)
@@ -14,3 +15,12 @@ export const regexMap = () => {
 // (?!.*?')
 // /(?<=.*?)\w+(?=\s*=*\s*\w*\()/g
 
+// html
+export const regexForHtml = () => {
+    const r = new Map()
+    .set('tag', /(?<=<[!/]*?)\w+/ig)
+    .set('attr', /\w+?(?==".*?")|(?<=\s)\w+(?=[\s/>])/g)
+    .set('string', /".*?"/g)
+    return r
+}
+// css

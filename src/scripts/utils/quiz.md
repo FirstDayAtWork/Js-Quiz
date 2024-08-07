@@ -4298,7 +4298,7 @@ funcTwo();
 
 #### Ответ: D
 
-Сначала мы вызываем `funcOne`. В первой строке `funcOne` мы вызываем _асинхронную_ функцию `setTimeout`, из которой обратный вызов отправляется в веб-API. (см. мою статью о цикле событий <a href="https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif">здесь</a>.)
+Сначала мы вызываем `funcOne`. В первой строке `funcOne` мы вызываем _асинхронную_ функцию `setTimeout`, из которой обратный вызов отправляется в веб-API. (см. мою статью о цикле событий [здесь](https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif))
 
 Затем мы вызываем обещание `myPromise`, которое является _асинхронной_ операцией.
 
