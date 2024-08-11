@@ -1,5 +1,4 @@
 export function findMdinTxt(str, regex, name){
-    // console.log(regex)
     let match = []
     if(!!str.textContent.match(regex)){
         const helperegex = /\?|\[|\]|\||\\n|\$|\(|\)|\.|\+|\*|\{|\}|\\/g
@@ -65,7 +64,6 @@ export function findMdinTxt(str, regex, name){
                     r_part = r_part.replace(/[<>]/g, x => x === '<' ? '&lt;' : '&gt;')
                 }
                 let href = el.match(/https:\/\/[\w\/\#&?=\-\.]+/g).join``
-                console.log('link', href)
                 before = `<a href=${href} target="_blank" 'referrerpolicy="no-referrer" rel="noopener noreferrer nofollow">`
                 after = `</a>`
                 el = el.replace('>', 'referrerpolicy="no-referrer">')

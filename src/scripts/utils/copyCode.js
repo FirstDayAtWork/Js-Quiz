@@ -1,9 +1,7 @@
 export function copySomeCode(element, counter){
     const button = document?.getElementById(`copyBtn-${counter}`)
-
     // Copy Pass Into Clipboard
-    button?.addEventListener('click', addToClipBoard);
-
+    button.addEventListener('click', addToClipBoard);
     // copy clip on keyboard clicks
     button?.addEventListener('keydown', (e) => {
       if(e.code === 'Enter' || e.code === 'NumpadEnter' || e.code === 'Space'){

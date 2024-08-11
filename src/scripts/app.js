@@ -6,11 +6,6 @@ import { regexForJs, regexForHtml } from "./utils/colorRegex.js"
 import { mdRegexMap } from "./utils/mdToJsRegex.js"
 import { findMdinTxt } from "./utils/findMdinTxt.js"
 
-/* TO DO
-    - fix event listeners on copy buttons (no events added)
-    - fix codeblock BEFORE wrapper showing wrong number of lines
-*/
-
 const main = document.querySelector('.main')
 const nextBtn = document.getElementById('next-q-btn')
 const questionCounter = document.querySelector('.question-counter')
@@ -61,7 +56,7 @@ async function startQuiz(){
     let count = 0
     let userScoreArr = []
     let res = 0
-    // generateQuizQuestion(arr, 75, userScoreArr)
+    // generateQuizQuestion(arr, 15, userScoreArr)
     // Swap elements in Array v2
     for (let i = arr.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
@@ -166,6 +161,25 @@ function generateQuizQuestion(arr, num, userScoreArr){
         answerVariants.append(answerInputWrapper)
     }
 
+    let nodes = [question, jsCode, answerVariants]
+    for(let elem of nodes){
+        delBr(elem)
+    }
+    
+    if(questionJsCode.childElementCount > 0){
+        const jsCodeMatch = jsCode.textContent.match(/^(?:javascript|js|html)\n/i)
+        if(/javascript|js/i.test(jsCodeMatch[0])){
+            for(let [key, value] of regexForJs()){
+                checkString(jsCode, value, key)
+            }
+        }
+        if(/html/i.test(jsCodeMatch[0])){
+            for(let [key, value] of regexForHtml()){
+                checkHtml(jsCode, value, key)
+            }
+        }
+    }
+
     if(Array.isArray(arr[num].answer)){
         arr[num].answer = arr[num].answer.map(el => {
             const regMatch = el.match(/^javascript|^js|^html\n/i)
@@ -198,40 +212,29 @@ function generateQuizQuestion(arr, num, userScoreArr){
         })
         const answerCodeWrapper = document.querySelectorAll('.answer-code-wrapper')
         const answerCode = document.querySelectorAll('.answer-code')
-    
         for(let k = 0; k < answerCode.length; k++){
             setBeforeAndCopyForCodeBlock(answerCode[k].innerHTML, answerCodeWrapper[k], copyIcon, counter)
-            copySomeCode('SAMPLE', counter)
+            copySomeCode(answerCode[k].textContent, counter)
             counter=counter+1
         }
     } else {
         p.innerText = arr[num].answer
-    }
-
-
-
-    let nodes = [question, jsCode, answerVariants, p]
-    for(let elem of nodes){
-        delBr(elem)
-    }
-    if(questionJsCode.childElementCount > 0){
-        const jsCodeMatch = jsCode.textContent.match(/^(?:javascript|js|html)\n/i)
-        if(/javascript|js/i.test(jsCodeMatch[0])){
-            for(let [key, value] of regexForJs()){
-                checkString(jsCode, value, key)
-            }
-        }
-        if(/html/i.test(jsCodeMatch[0])){
-            for(let [key, value] of regexForHtml()){
-                checkHtml(jsCode, value, key)
-            }
-        }
+        delBr(p)
     }
     for(let [key, value] of mdRegexMap()){
         findMdinTxt(p, value, key)
     }
-    main.append(quizWrapper)
 
+    if(Array.isArray(arr[num].answer)){
+        const answerCode = document.querySelectorAll('.answer-code')
+        counter = 1
+        answerCode.forEach(elem => {
+            copySomeCode(elem.textContent, counter)
+            counter=counter+1
+        })
+
+    }
+    main.append(quizWrapper)
 
     // add click to inputs
     const rightAnswer = arr[num].rightAnswer

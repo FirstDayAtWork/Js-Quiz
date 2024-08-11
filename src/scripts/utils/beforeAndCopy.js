@@ -1,8 +1,12 @@
 export function setBeforeAndCopyForCodeBlock(code, wrapper, icon, counter){
             // count rows in js code
-            let rowCountArr = code.match(/\n/g)
+            let rowCountArr = code.match(/\n/g) || []
             const beforeWrapper = document.createElement('div')
-            for(let j = 0; j < rowCountArr.length-1; j++){
+            let codeNum = rowCountArr.length-1
+            if(counter > 0){
+                codeNum = (rowCountArr.length) + 1
+            }
+            for(let j = 0; j < codeNum; j++){
                 const before = document.createElement('pre')
                 before.classList.add('before')
                 beforeWrapper.classList.add('before-wrapper')
