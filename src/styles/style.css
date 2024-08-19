@@ -4,18 +4,24 @@
 
 @font-face {
     font-family: "Roboto Mono";
-    src: local("Roboto")
-    local("Roboto Mono"),
+    src: 
          url("./assets/fonts/RobotoMono-Regular.ttf") format("ttf"),
+  }
+  @font-face {
+    font-family: "Roboto";
+    src: 
          url("./assets/fonts/Roboto-Regular.ttf") format("ttf");
   }
 
 body{
     font-family: "Roboto", sans-serif;
-    color: #3c4043;
+    color: var(--font-color);
+    background-color: var(--bg-color);
     padding: 0;
     margin: 0;
 }
+
+
 
 h1{
     margin: 8px 0;
@@ -46,6 +52,13 @@ code, pre{
     padding: 0 120px;
 }
 
+.nav-menu-wrapper{
+    display: flex;
+    justify-content: right;
+    margin: 8px auto;
+    max-width: 800px;
+}
+
 .nav-wrapper{
     display: flex;
     flex-flow: row nowrap;
@@ -54,6 +67,60 @@ code, pre{
     margin: auto;
     max-width: 800px;
     width: 100%;
+}
+/* popover */
+#night-mode-btn{
+    anchor-name: --anchor-dark-mode;
+}
+
+.nav-btn-style{
+    background: var(--code-bg-color);
+    border: none;
+    font-size: 16px;
+    padding: 8px 12px;
+    border-radius: 7px;
+    font-weight: 600;
+    color: var(--font-color);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+}
+
+.nav-btn-style:hover{
+    background-color: var(--bg-hover-color);
+    color: var(--font-color-hoover);
+}
+
+
+.popover-wrapper{
+    position-anchor: --anchor-dark-mode;
+    inset-area: bottom span-left;
+    width: calc(anchor-size(width) * 1.5);
+    margin: 0;
+    border: none;
+    background-color: var(--code-bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--font-color);
+}
+
+.popover-content{
+    display: flex;
+    flex-flow: column wrap;
+    align-items: stretch;
+    justify-content: center;
+}
+
+.popover-btn-style{
+    text-align: left;
+    background-color: var(--second-app-bg-color);
+    color: var(--footer-button-color);
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.popover-btn-style:hover{
+    background-color: var(--bg-hover-color);
+    color: var(--font-color-hoover);
 }
 
 .question-counter{
@@ -67,14 +134,14 @@ code, pre{
     border-radius: 50px;
     padding: 10px 15px;
     font-size: 20px;
-    background-color: #3ac267;
-    color: var(--main-app-font-color);
+    background-color: var(--btn-bg-color);
+    color: #EEF1F3;
     letter-spacing: 5px;
     cursor: pointer;
 }
 
 .btn-style:hover{
-    background-color: rgba(31, 136, 96, 0.897);
+    background-color: var(--btn-bg-hoover);
 }
 
 .main{
@@ -89,7 +156,7 @@ code, pre{
     font-size: 15px;
     word-break:break-word;
     line-height: 25px;
-    color: #3c4043;
+    color: var(--font-color);
 }
 
 .footer{
@@ -106,13 +173,13 @@ code, pre{
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #dadce0;
+    border: 1px solid var(--border-color);
     margin: 5px 0;
     border-radius: 5px;
 }
 
 .answer-input-wrapper:hover{
-    background-color: #E3EDF7;
+    background-color: var(--bg-hover-color);
 }
 
 label{
@@ -128,7 +195,7 @@ label{
     height: 40px;
     margin: 0 10px;
     width: 18px;
-    accent-color: #3c4043;;
+    accent-color: var(--font-color);
 }
 
  .question, .js-code-wrapper-style, .answer-variants, .answer{
@@ -140,14 +207,13 @@ label{
  .js-code-wrapper-style{
     display: flex;
     position: relative;
-    background-color: #F5F1EC;
+    background-color: var(--code-bg-color);
     padding: 0;
  }
 
  .copy-btn{
     position: absolute;
     display: flex;
-    font-family: 'Roboto';
     top: 0;
     right: 0;
     border: none;
@@ -155,16 +221,21 @@ label{
     padding: 6px 8px;
     cursor: pointer;
     text-transform: uppercase;
+    background-color: var(--code-bg-color);
+ }
+
+ svg{
+    fill: var(--font-color);
  }
 
 .copy-btn:hover{
-    background-color: #e7e5e3;
+    background-color: var(--bg-hover-color);
  }
 
  .popover-style{
     position: absolute;
-    background-color: #001a34e5;
-    color: rgba(255, 255, 255, 0.959);
+    background-color: var(--popover-bg-color);
+    color: var(--popover-color);
     border-radius: 8px;
     font-size: 12px;
     line-height: 2;
@@ -175,7 +246,7 @@ label{
 
  .before-wrapper{
     text-align: right;
-    background-color: #e7e5e3;
+    background-color: var(--code-count-color);
     padding: 12px;
  }
 
@@ -195,11 +266,13 @@ label{
 
 
  [aria-disabled=true]{
-    background: rgb(0 0 0 / 40%);
+    color: var(--disabled-color);
+    background: var(--disabled-bg-color);
  }
 
  [aria-disabled=true]:hover{
-    background: rgb(0 0 0 / 40%);
+    color: var(--disabled-color);
+    background: var(--disabled-bg-color);
  }
 
  .wrong-answer, .wrong-answer:hover{

@@ -6,9 +6,11 @@ import { regexForJs, regexForHtml } from "./utils/colorRegex.js"
 import { mdRegexMap } from "./utils/mdToJsRegex.js"
 import { findMdinTxt } from "./utils/findMdinTxt.js"
 
+const root = document.querySelector(':root')
 const main = document.querySelector('.main')
 const nextBtn = document.getElementById('next-q-btn')
 const questionCounter = document.querySelector('.question-counter')
+const popOverContent = document.querySelector('.popover-content'); 
 
 async function getLocalQuizData(){
     let arr = []
@@ -56,7 +58,7 @@ async function startQuiz(){
     let count = 0
     let userScoreArr = []
     let res = 0
-    // generateQuizQuestion(arr, 15, userScoreArr)
+    // generateQuizQuestion(arr, 12, userScoreArr)
     // Swap elements in Array v2
     for (let i = arr.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
@@ -278,4 +280,57 @@ function generateQuizQuestion(arr, num, userScoreArr){
 
 function delBr(node){
     node.innerHTML = node.innerHTML.replace(/^(<br>){1,5}|(<br>){1,5}$/g, '')
+}
+
+// dark mode
+popOverContent.addEventListener('click', (e) => {
+    switch (e.target.id) {
+        case 'light':
+            root.classList.remove('dark')
+            setLocalStorageData('theme', 'light')
+            break;
+        case 'dark':
+            root.classList.add('dark')
+            setLocalStorageData('theme', 'dark')
+            break;
+        default:
+            getUserTheme('os default')
+            break;
+    }
+})
+
+
+function setLocalStorageData(item, arr){
+    localStorage.setItem(item, JSON.stringify(arr))
+}
+
+function getLocalStorageData(item){
+    return JSON.parse(localStorage.getItem(item))
+}
+
+function getUserTheme(os){
+    if(getLocalStorageData('theme')){
+        if(os){
+            if(window.matchMedia('(prefers-color-scheme: dark)').matches){
+                root.classList.add('dark')
+                setLocalStorageData('theme', os)
+                return
+            }
+            root.classList.remove('dark')
+            setLocalStorageData('theme', os)
+            return
+        }
+        return (
+            getLocalStorageData('theme') === 'dark' 
+            ? root.classList.add('dark')
+            : root.classList.remove('dark')
+        )
+    }
+    if(window.matchMedia('(prefers-color-scheme: dark)').matches){
+        root.classList.add('dark')
+        setLocalStorageData('theme', 'os default')
+        return
+    }
+    root.classList.remove('dark')
+    setLocalStorageData('theme', 'os default')
 }
