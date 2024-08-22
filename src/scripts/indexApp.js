@@ -25,7 +25,7 @@ import { getLocalStorageData, setLocalStorageData } from "./utils/localStorage.j
 
     startBtn.addEventListener('click', () => {
         setLocalStorageData('preference', obj)
-        window.location.href = `${window.location.origin}/quiz.html`
+        window.location.href = `quiz.html`
     })
 })();
 
