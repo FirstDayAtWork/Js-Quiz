@@ -54,7 +54,6 @@ async function getLocalQuizData(preference){
         }
     }
     arr.shift()
-    console.log(arr)
     return arr
 }
 
@@ -65,7 +64,6 @@ async function startQuiz(preference){
     let numOfQuestions = preference.number === 'all'
      ? arr.length : preference.number;
     let language = preference.language;
-    console.log('nums',numOfQuestions)
     let count = 0
     let userScoreArr = []
     let res = 0

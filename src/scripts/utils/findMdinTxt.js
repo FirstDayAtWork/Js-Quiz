@@ -30,7 +30,6 @@ export function findMdinTxt(str, regex, name){
         const helperegex = /\?|\[|\]|\||\\n|\$|\(|\)|\.|\+|\*|\{|\}|\\/g
         match = [...new Set(str.textContent.match(regex))]
         match.map(el => {
-            console.log(el)
             let r_part = el
             let before = ''
             let after = ''
@@ -86,7 +85,6 @@ export function findMdinTxt(str, regex, name){
             }
 
             if(name === 'elemWithSrc'){
-                console.log('src', el)
                 el = el.replace(/\[.+?\]|[()]/g, '')
                 if(/[<>]/g.test(r_part)){
                     r_part = r_part.replace(/[<>]/g, x => x === '<' ? '&lt;' : '&gt;')
