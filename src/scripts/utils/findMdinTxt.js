@@ -1,9 +1,36 @@
 export function findMdinTxt(str, regex, name){
     let match = []
+    if(!str.textContent){
+        const helperegex = /\?|\[|\]|\||\\n|\$|\(|\)|\.|\+|\*|\{|\}|\\/g
+        match = [...new Set(str.match(regex))]
+        match.map(el => {
+            let r_part = el
+            let before = ''
+            let after = ''
+            if(!!helperegex.test(r_part)){
+                r_part = r_part.replace(helperegex, x => '\\' + x)
+            }
+            if(name === 'elemWithSrc'){
+                console.log('src', el)
+                el = el.replace(/\[.+?\]|[()]/g, '')
+                let href = el.match(/https:\/\/[\w\/\#&?=\-\.]+/g).join``
+                before = `<br><a href=${href} target="_blank" 'referrerpolicy="no-referrer" rel="noopener noreferrer nofollow">`
+                after = `</a><br>`
+                el = el.replace('>', ' referrerpolicy="no-referrer">')
+                // console.log('wtf', href)
+            }
+            let r = new RegExp(r_part, 'g')
+            console.log('tada', str)
+            str = str.trim().replace(r, `${before}${el}${after}`)
+        })
+        console.log('res', str)
+        return str
+    }
     if(!!str.textContent.match(regex)){
         const helperegex = /\?|\[|\]|\||\\n|\$|\(|\)|\.|\+|\*|\{|\}|\\/g
         match = [...new Set(str.textContent.match(regex))]
         match.map(el => {
+            console.log(el)
             let r_part = el
             let before = ''
             let after = ''
@@ -59,6 +86,7 @@ export function findMdinTxt(str, regex, name){
             }
 
             if(name === 'elemWithSrc'){
+                console.log('src', el)
                 el = el.replace(/\[.+?\]|[()]/g, '')
                 if(/[<>]/g.test(r_part)){
                     r_part = r_part.replace(/[<>]/g, x => x === '<' ? '&lt;' : '&gt;')
@@ -66,7 +94,7 @@ export function findMdinTxt(str, regex, name){
                 let href = el.match(/https:\/\/[\w\/\#&?=\-\.]+/g).join``
                 before = `<a href=${href} target="_blank" 'referrerpolicy="no-referrer" rel="noopener noreferrer nofollow">`
                 after = `</a>`
-                el = el.replace('>', 'referrerpolicy="no-referrer">')
+                el = el.replace('>', ' referrerpolicy="no-referrer">')
             }
             let r = new RegExp(r_part, 'g')
             // console.log('tada', r, r_part, el)

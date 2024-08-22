@@ -1335,7 +1335,8 @@ const secondPromise = new Promise((res, rej) => {
   setTimeout(res, 100, 'два');
 });
 
-Promise.race([firstPromise, secondPromise]).then(res => console.log(res));
+Promise.race([firstPromise, secondPromise])
+       .then(res => console.log(res));
 ```
 
 - A: `"один"`

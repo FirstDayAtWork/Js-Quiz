@@ -5,21 +5,28 @@ import { copyIcon } from "./utils/svg.js"
 import { regexForJs, regexForHtml } from "./utils/colorRegex.js"
 import { mdRegexMap } from "./utils/mdToJsRegex.js"
 import { findMdinTxt } from "./utils/findMdinTxt.js"
+import { getLocalStorageData, setLocalStorageData } from "./utils/localStorage.js"
 
-const root = document.querySelector(':root')
 const main = document.querySelector('.main')
 const nextBtn = document.getElementById('next-q-btn')
 const questionCounter = document.querySelector('.question-counter')
-const popOverContent = document.querySelector('.popover-content'); 
 
-async function getLocalQuizData(){
+// start app
+;(() => {
+    const preference = getLocalStorageData('preference')
+    startQuiz(preference)
+})();
+
+async function getLocalQuizData(preference){
     let arr = []
-    const response = await fetch('./src/scripts/utils/quiz.md', {
+    const part = preference.language === 'ru' ? [8,9] : [9, 10]
+    const src = `quiz-${preference.language}.md`
+    const response = await fetch(`./src/scripts/utils/${src}`, {
     })
     const data = await response.text()
     arr = data.split`---`
     .map(el => el.replace('\r\n\r\n', '')
-                 .replace('<details><summary><b>Ответ</b></summary>', '')
+                 .replace(`<details><summary><b>${preference.language === 'ru' ? 'Ответ' : 'Answer'}</b></summary>`, '')
                  .replace(/<p>|<\/p>|<\/details>/g, '')
                  .split('######').join`` )
     for(let i = 1; i < arr.length; i++){
@@ -33,7 +40,7 @@ async function getLocalQuizData(){
             } else {
                 arr[i][0] = arr[i][0].split(/```/g)
             }
-            arr[i][2] = arr[i][1].slice(8, 9)
+            arr[i][2] = arr[i][1].slice(part[0], part[1])
         } 
         if(!!/```/.test(arr[i][1])){
             arr[i][1] = arr[i][1].split(/```/g)
@@ -47,25 +54,30 @@ async function getLocalQuizData(){
         }
     }
     arr.shift()
+    console.log(arr)
     return arr
 }
 
 
-async function startQuiz(){
-    let arr = await getLocalQuizData()
+async function startQuiz(preference){
+    let arr = await getLocalQuizData(preference)
     let lessonArr = []
-    let numOfQuestions = 15
+    let numOfQuestions = preference.number === 'all'
+     ? arr.length : preference.number;
+    let language = preference.language;
+    console.log('nums',numOfQuestions)
     let count = 0
     let userScoreArr = []
     let res = 0
-    // generateQuizQuestion(arr, 12, userScoreArr)
+    // generateQuizQuestion(arr, 58, userScoreArr)
     // Swap elements in Array v2
     for (let i = arr.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     lessonArr = arr.slice(0, numOfQuestions)
-    generateQuizQuestion(lessonArr, count, userScoreArr)
+    generateQuizQuestion(lessonArr, count, userScoreArr, language)
+    questionCounter.innerText = `${count+1} / ${numOfQuestions}`
     nextBtn.addEventListener('click', () => {
         if(nextBtn.ariaDisabled === 'true'){
             return 
@@ -81,7 +93,7 @@ async function startQuiz(){
                     <div class="answer-variants"></div>
                     <details class="answer answer-off">
                         <summary class="summary">
-                            <b>Ответ</b>
+                            <b>${language === 'ru' ? 'Ответ' : 'Answer'}</b>
                         </summary>
                         <p class="answer-txt"></p>
                     </details>
@@ -107,7 +119,7 @@ async function startQuiz(){
                 }
                 count++
                 questionCounter.innerText = `${count+1} / ${numOfQuestions}`
-                generateQuizQuestion(lessonArr, count, userScoreArr)
+                generateQuizQuestion(lessonArr, count, userScoreArr, language)
                 nextBtn.ariaDisabled = 'true'
                 return
             }
@@ -115,9 +127,10 @@ async function startQuiz(){
     })
 }
 
-startQuiz()
 
-function generateQuizQuestion(arr, num, userScoreArr){
+
+
+function generateQuizQuestion(arr, num, userScoreArr, language){
     let counter = 0
     const quizWrapper = document.querySelector('.quiz-wrapper')
     const question = document.querySelector('.question')
@@ -131,6 +144,7 @@ function generateQuizQuestion(arr, num, userScoreArr){
     jsCode.classList.add('js-code')
     jsCode.classList.add('js-code-style')
     jsCode.textContent = arr[num].jsCode
+    summary.innerHTML = `<b>${language === 'ru' ? 'Ответ' : "Answer"}</b>` 
 
     if(arr[num].jsCode){
         questionJsCode.append(jsCode)
@@ -191,7 +205,7 @@ function generateQuizQuestion(arr, num, userScoreArr){
                 }
                 return (`
                     <div class="answer-code-wrapper js-code-wrapper-style">
-                        <pre class="answer-code js-code-style">${el}</pre>
+                        <pre class="answer-code js-code-style">${el.trim()}</pre>
                     </div>
                     `
                 )
@@ -206,6 +220,11 @@ function generateQuizQuestion(arr, num, userScoreArr){
                     </div>
                     `
                 )
+            }
+            if(mdRegexMap().get('elemWithSrc').test(el)){
+                el = findMdinTxt(el, mdRegexMap().get('elemWithSrc'), 'elemWithSrc')
+                console.log(el)
+                return el
             }
             return `<p>${el}</p>`
         })
@@ -280,57 +299,4 @@ function generateQuizQuestion(arr, num, userScoreArr){
 
 function delBr(node){
     node.innerHTML = node.innerHTML.replace(/^(<br>){1,5}|(<br>){1,5}$/g, '')
-}
-
-// dark mode
-popOverContent.addEventListener('click', (e) => {
-    switch (e.target.id) {
-        case 'light':
-            root.classList.remove('dark')
-            setLocalStorageData('theme', 'light')
-            break;
-        case 'dark':
-            root.classList.add('dark')
-            setLocalStorageData('theme', 'dark')
-            break;
-        default:
-            getUserTheme('os default')
-            break;
-    }
-})
-
-
-function setLocalStorageData(item, arr){
-    localStorage.setItem(item, JSON.stringify(arr))
-}
-
-function getLocalStorageData(item){
-    return JSON.parse(localStorage.getItem(item))
-}
-
-function getUserTheme(os){
-    if(getLocalStorageData('theme')){
-        if(os){
-            if(window.matchMedia('(prefers-color-scheme: dark)').matches){
-                root.classList.add('dark')
-                setLocalStorageData('theme', os)
-                return
-            }
-            root.classList.remove('dark')
-            setLocalStorageData('theme', os)
-            return
-        }
-        return (
-            getLocalStorageData('theme') === 'dark' 
-            ? root.classList.add('dark')
-            : root.classList.remove('dark')
-        )
-    }
-    if(window.matchMedia('(prefers-color-scheme: dark)').matches){
-        root.classList.add('dark')
-        setLocalStorageData('theme', 'os default')
-        return
-    }
-    root.classList.remove('dark')
-    setLocalStorageData('theme', 'os default')
 }

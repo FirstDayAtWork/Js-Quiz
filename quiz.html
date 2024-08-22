@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="src/styles/style.css">
+    <link rel="stylesheet" href="src/styles/codeColors.css">
+    <script type="module" efer src="src/scripts/darkMode.js"></script>
+    <script defer type="module" src="src/scripts/app.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div class="app__wrapper">
+            <header class="header">
+                <nav class="nav-menu-wrapper">
+                    <button popovertarget="theme-popover" class="nav-btn-style" id="night-mode-btn" type="button">Theme</button>
+                    <div class="popover-wrapper" id="theme-popover" popover>
+                        <div class="popover-content">
+                            <button class="popover-btn-style" type="button" id="light">Light</button>
+                            <button class="popover-btn-style" type="button" id="dark">Dark</button>
+                            <button class="popover-btn-style" type="button" id="os">OS Default</button>
+                        </div>
+                    </div>
+                </nav>
+                <h1>JS-Test</h1>
+                <div class="nav-wrapper">
+                    <div class="question-counter">?? / ??</div>
+                    <button class="btn-style" id="next-q-btn" type="button" aria-disabled="true">Next</button>
+                </div>
+            </header>
+            <main class="main">
+                <div class="quiz-wrapper">
+                    <div class="question"></div>
+                    <div class="question-js-code js-code-wrapper-style" tabindex="0"></div>
+                    <div class="answer-variants"></div>
+                    <details class="answer answer-off">
+                        <summary class="summary">
+                            <b>Ответ</b>
+                        </summary>
+                        <p class="answer-txt"></p>
+                    </details>
+                </div>
+            </main>
+            <footer class="footer"></footer>
+    </div>
+</body>
+</html>
