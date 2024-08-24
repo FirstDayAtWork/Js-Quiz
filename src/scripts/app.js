@@ -5,7 +5,7 @@ import { copyIcon } from "./utils/svg.js"
 import { regexForJs, regexForHtml } from "./utils/colorRegex.js"
 import { mdRegexMap } from "./utils/mdToJsRegex.js"
 import { findMdinTxt } from "./utils/findMdinTxt.js"
-import { getLocalStorageData, setLocalStorageData } from "./utils/localStorage.js"
+import { getLocalStorageData } from "./utils/localStorage.js"
 
 const main = document.querySelector('.main')
 const nextBtn = document.getElementById('next-q-btn')
@@ -97,28 +97,27 @@ async function startQuiz(preference){
                     </details>
                 </div>
                 `
+                nextBtn.ariaDisabled = 'true'
                 if(count >= numOfQuestions-1){
                     res = userScoreArr.reduce((a, b) => a + b, 0)
                     main.innerHTML = `
                     <div class="result-wrapper">
                         <div class="result">Result: 
-                            <div class="result-score">${res} / ${numOfQuestions}</div>
+                            <div class="result-score">${res}/${numOfQuestions} (${(res * 100) / numOfQuestions}%)</div>
                         </div>
                         <button class="btn-style" id="restart-btn" type="button">Restart</button>
                     </div>
                     `
                     const restartBtn = document.getElementById('restart-btn')
                     restartBtn.addEventListener('click', () => {
-                        location.reload()
+                        window.location.assign('index.html')
                     })
                     questionCounter.innerText = `? / ?`
-                    console.log("it\s over!", res)
                     return
                 }
                 count++
                 questionCounter.innerText = `${count+1} / ${numOfQuestions}`
                 generateQuizQuestion(lessonArr, count, userScoreArr, language)
-                nextBtn.ariaDisabled = 'true'
                 return
             }
         }
@@ -221,7 +220,6 @@ function generateQuizQuestion(arr, num, userScoreArr, language){
             }
             if(mdRegexMap().get('elemWithSrc').test(el)){
                 el = findMdinTxt(el, mdRegexMap().get('elemWithSrc'), 'elemWithSrc')
-                console.log(el)
                 return el
             }
             return `<p>${el}</p>`
@@ -260,7 +258,6 @@ function generateQuizQuestion(arr, num, userScoreArr, language){
     const inputs = document.querySelectorAll('.answer-style')
     inputs.forEach(el => el.addEventListener('change', (e) => {
         if(el.parentElement.ariaDisabled === 'true'){
-            console.log(el, el.ariaDisabled)
             return
         }
         for (const elem of inputs) {

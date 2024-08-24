@@ -11,19 +11,15 @@ export function findMdinTxt(str, regex, name){
                 r_part = r_part.replace(helperegex, x => '\\' + x)
             }
             if(name === 'elemWithSrc'){
-                console.log('src', el)
                 el = el.replace(/\[.+?\]|[()]/g, '')
                 let href = el.match(/https:\/\/[\w\/\#&?=\-\.]+/g).join``
                 before = `<br><a href=${href} target="_blank" 'referrerpolicy="no-referrer" rel="noopener noreferrer nofollow">`
                 after = `</a><br>`
                 el = el.replace('>', ' referrerpolicy="no-referrer">')
-                // console.log('wtf', href)
             }
             let r = new RegExp(r_part, 'g')
-            console.log('tada', str)
             str = str.trim().replace(r, `${before}${el}${after}`)
         })
-        console.log('res', str)
         return str
     }
     if(!!str.textContent.match(regex)){
@@ -56,7 +52,6 @@ export function findMdinTxt(str, regex, name){
             if(name === 'codeblock'){
                 if(/(?<=`{3})javascript|js/g.test(el)){
                     el = el.replace(/`{3}(?:js|javascript)|`{3}/g, '')
-                    // console.log('it worsk???', el)
                     r_part = r_part.replace(/js|javascript/g, x=> x === 'js' ? 'js\\n' : 'javascript\\n')
                     before = `
                     <pre><code class=${name}>`
@@ -79,7 +74,6 @@ export function findMdinTxt(str, regex, name){
             if(name === 'links'){
                 let txt = el.match(/(?<=\[).+?(?=\])/).join``
                 el = el.replace(/\[.+?\]|[()]/g, '')
-                // console.log('link', el)
                 before = `<a href=`
                 after = `>${txt}</a>`
             }
@@ -95,7 +89,6 @@ export function findMdinTxt(str, regex, name){
                 el = el.replace('>', ' referrerpolicy="no-referrer">')
             }
             let r = new RegExp(r_part, 'g')
-            // console.log('tada', r, r_part, el)
             str.innerHTML = str.innerHTML.trim().replace(r, `${before}${el}${after}`)
         })
     }

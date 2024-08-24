@@ -1335,7 +1335,8 @@ const secondPromise = new Promise((res, rej) => {
   setTimeout(res, 100, 'two');
 });
 
-Promise.race([firstPromise, secondPromise]).then(res => console.log(res));
+Promise.race([firstPromise, secondPromise])
+       .then(res => console.log(res));
 ```
 
 - A: `"one"`
@@ -1723,9 +1724,7 @@ We passed the iterable `[1, 1, 2, 3, 4]` with a duplicate value `1`. Since we ca
 // counter.js
 let counter = 10;
 export default counter;
-```
 
-```javascript
 // index.js
 import myCounter from './counter';
 
@@ -2076,12 +2075,12 @@ The `Labrador` class receives two arguments, `name` since it extends `Dog`, and 
 ###### 67. What's the output?
 
 ```javascript
-// index.js
+// index.js 
 console.log('running index.js');
 import { sum } from './sum.js';
 console.log(sum(1, 2));
 
-// sum.js
+// sum.js 
 console.log('running sum.js');
 export const sum = (a, b) => a + b;
 ```
@@ -3181,8 +3180,6 @@ ReferenceErrors get thrown when JavaScript isn't able to find a reference to a v
 ###### 100. What's the value of output?
 
 ```javascript
-// 🎉✨ This is my 100th question! ✨🎉
-
 const output = `${[] && 'Im'}possible!
 You should${'' && `n't`} see a therapist after so much JavaScript lol`;
 ```
@@ -4304,7 +4301,7 @@ funcTwo();
 
 #### Answer: C
 
-First, we invoke `funcOne`. On the first line of `funcOne`, we call the _asynchronous_ `setTimeout` function, from which the callback is sent to the Web API. (see my article on the event loop <a href="https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif">here</a>.)
+First, we invoke `funcOne`. On the first line of `funcOne`, we call the _asynchronous_ `setTimeout` function, from which the callback is sent to the Web API. (see my article on the event loop [here]("https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif"))
 
 Then we call the `myPromise` promise, which is an _asynchronous_ operation. Pay attention, that now only the first then clause was added to the microtask queue.
 

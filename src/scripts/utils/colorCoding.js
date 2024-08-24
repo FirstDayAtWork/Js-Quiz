@@ -2,14 +2,12 @@
 
 export function checkString(str, regexp, name, node){
     let match = []
-    // console.log(str)
     if(!str.innerHTML){
         str = str.replace(/^javascript|^js|^html\n/i, '')
         if(!!str.match(regexp)){
             const helperegex = /\?|\[|\]|\||\\n|\$|\(|\)|\.|\+|\*|\{|\}|\\/g
             match = [...new Set(str.match(regexp))]
             match.map(el => {
-                // console.log(el)
                 let r_part = el
                 let s = ''
                 let e = ''
@@ -51,7 +49,6 @@ export function checkString(str, regexp, name, node){
                 }
                 let r = new RegExp(s+r_part+e, 'g')
                 str = str.trim().replace(r, `<code class=${name}>${el}</code>`) 
-                // console.log('r', r, str)
             })
         }
         return str
@@ -61,7 +58,6 @@ export function checkString(str, regexp, name, node){
         const helperegex = /\?|\[|\]|\||\\n|\$|\(|\)|\.|\+|\*|\{|\}|\\/g
         match = [...new Set(str.textContent.match(regexp))]
         match.map(el => {
-            // console.log(el)
             let r_part = el
             let s = ''
             let e = ''
@@ -103,7 +99,6 @@ export function checkString(str, regexp, name, node){
             }
             let r = new RegExp(s+r_part+e, 'g')
             str.innerHTML = str.innerHTML.trim().replace(r, `<code class=${name}>${el}</code>`) 
-            // console.log('r', r, str.innerHTML)
         })
     }
 }

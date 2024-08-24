@@ -11,10 +11,6 @@ export const regexForJs = () => {
     return r
 }
 
-// /['|"|`].+?(?='|"|`)['|"|`]/g
-// (?!.*?')
-// /(?<=.*?)\w+(?=\s*=*\s*\w*\()/g
-
 // html
 export const regexForHtml = () => {
     const r = new Map()
@@ -23,4 +19,3 @@ export const regexForHtml = () => {
     .set('string', /".*?"/g)
     return r
 }
-// css

@@ -21,7 +21,6 @@
     --disabled-bg-color: rgb(0 0 0 / 40%);
     --disabled-color: rgba(41, 41, 41, 0.4);
 }
-
 :root.dark{
     --font-color: #EEF1F3;
     --bg-color: #0d1117;
@@ -45,36 +44,24 @@
     --disabled-bg-color: rgba(71, 71, 71, 0.4);
     --disabled-color: rgba(104, 104, 104, 0.4);
 }
-
-
 .variable, .tag{
     color: var(--var-color);
 }
-
 .function, .attr{
     color: var(--func-name-color)
 }
-
 .string{
     color: var(--string-color);
 }
-
 .comment{
     color: var(--comment-color);
 }
-
 .keyword{
     color: var(--keyword-color);
 }
-
-.link{
-    /* text-decoration-line: underline; */
-}
-
 .templateLit{
     color: var(--templateLit-color);
 }
-
 .code{
     background-color: #afb8c133;
     color: var(--font-color);
@@ -82,20 +69,17 @@
     border-radius: 6px;
     font-size: 85%;
 }
-
 label:has(.code){
     .code{
         font-size: 14px;
     }
 }
-
 label:is(.wrong-answer), label:is(.right-answer){
     .code{
         color: white;
         background-color: inherit;
     }
 }
-
 .comment:has(.string){
     .variable, .string, .function, .keyword{
         color: inherit;
