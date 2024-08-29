@@ -108,6 +108,7 @@ code, pre{
     font-size: 24px;
     font-weight: 500;
     text-wrap: nowrap;
+    opacity: 0.9;
 }
 .btn-style{
     border: none;
@@ -122,9 +123,48 @@ code, pre{
 .btn-style:hover{
     background-color: var(--btn-bg-hoover);
 }
+/* loader */
+.loader-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50dvh;
+}
+.circle{
+    animation: anicircle;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    transform: rotate(180deg);
+}
+@keyframes anicircle {
+    from{
+        transform: rotate(0);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+/* quiz content */
 .main{
     min-width: 100%;
     padding: 0 120px;
+}
+.animate-quiz-on{
+    animation-name: animateQuiz;
+    animation-duration: .35s;
+    animation-timing-function: linear;
+}
+@keyframes animateQuiz {
+    0%{
+        opacity: 1;
+      }
+      50%{
+        opacity: 0.2;
+      }
+      100%{
+        opacity: 1;
+      }
 }
 .quiz-wrapper{
     max-width: 800px;
@@ -319,6 +359,14 @@ label{
     bottom: 0;
     padding: 30px;
  }
+ .noscript-container{
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    height: 100dvh;
+}
 
  @media only screen and (max-width: 840px) {
     .main, .header{
@@ -336,3 +384,34 @@ label{
   }
 
   
+@view-transition {
+    navigation: auto;
+}
+
+
+html {
+    view-transition-name: fromSide;
+}
+
+@keyframes scale-in {
+    from {
+        translate: -100vh 0;
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+@keyframes scale-out {
+    to{
+        translate: -100vh 0;
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+::view-transition-old(fromSide) {
+    animation: .5s ease scale-out;
+}
+::view-transition-new(fromSide) {
+    animation: .5s ease scale-in;
+}
+

@@ -14,6 +14,7 @@ const questionCounter = document.querySelector('.question-counter')
 // start app
 ;(() => {
     const preference = getLocalStorageData('preference')
+    if(!preference){ return window.location.replace(`/`) }
     startQuiz(preference)
 })();
 
@@ -60,6 +61,7 @@ async function getLocalQuizData(preference){
 
 async function startQuiz(preference){
     let arr = await getLocalQuizData(preference)
+    document.querySelector('.loader-wrapper').remove()
     let lessonArr = []
     let numOfQuestions = preference.number === 'all'
      ? arr.length : preference.number;
@@ -117,6 +119,7 @@ async function startQuiz(preference){
                 }
                 count++
                 questionCounter.innerText = `${count+1} / ${numOfQuestions}`
+                main.classList.add('animate-quiz-on')
                 generateQuizQuestion(lessonArr, count, userScoreArr, language)
                 return
             }
@@ -270,6 +273,7 @@ function generateQuizQuestion(arr, num, userScoreArr, language){
         nextBtn.ariaDisabled = 'false'
         userScoreArr.push(+(e.target.dataset.abc === rightAnswer))
         details.classList.toggle('answer-off')
+        main.classList.remove('animate-quiz-on')
             if(e.target.dataset.abc !== rightAnswer){
                 e.target.parentElement.classList.add('wrong-answer')
                 e.target.nextSibling.classList.add('wrong-answer')
