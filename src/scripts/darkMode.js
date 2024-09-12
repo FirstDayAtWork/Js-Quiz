@@ -21,9 +21,9 @@ popOverContent.addEventListener('click', (e) => {
     }
 })
 
-function getUserTheme(os){
-    if(getLocalStorageData('theme')){
-        if(os){
+function getUserTheme(os = getLocalStorageData('theme')){
+    if(/(?<!.+?)(light|dark|os default)(?!.+?)/.test(os)){
+        if(os === 'os default'){
             if(window.matchMedia('(prefers-color-scheme: dark)').matches){
                 root.classList.add('dark')
                 setLocalStorageData('theme', os)

@@ -367,32 +367,27 @@ label{
     margin: 10px;
     height: 100dvh;
 }
-
- @media only screen and (max-width: 840px) {
-    .main, .header{
-        padding: 0 10px;
+@media only screen and (max-width: 840px) {
+   .main, .header{
+       padding: 0 10px;
+   }
+   .start-quiz-wrapper{
+       padding: 0 10px;
     }
-    .start-quiz-wrapper{
-        padding: 0 10px;
-     }
+}
+@media only screen and (max-width: 513px) {
+  .js-code-wrapper-style{
+      width: calc(100vw - 20px);
+      overflow: auto !important;
   }
-  @media only screen and (max-width: 513px) {
-    .js-code-wrapper-style{
-        width: calc(100vw - 20px);
-        overflow: auto !important;
-    }
-  }
-
-  
+}
+/* cross-page-transition */
 @view-transition {
     navigation: auto;
 }
-
-
 html {
     view-transition-name: fromSide;
 }
-
 @keyframes scale-in {
     from {
         translate: -100vh 0;
@@ -407,7 +402,6 @@ html {
         visibility: hidden;
     }
 }
-
 ::view-transition-old(fromSide) {
     animation: .5s ease scale-out;
 }
