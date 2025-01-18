@@ -78,7 +78,7 @@ code, pre{
 }
 .popover-wrapper{
     position-anchor: --anchor-dark-mode;
-    inset-area: bottom span-left;
+    position-area: bottom span-left;
     width: calc(anchor-size(width) * 1.5);
     margin: 0;
     border: none;
