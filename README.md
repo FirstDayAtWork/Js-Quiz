@@ -2,4 +2,4 @@
 
 So i found this [repo](https://github.com/lydiahallie/javascript-questions) and decide to make it interactive!
 
-![preview](src/assets/imgs/app_preview.png)
+![preview](src/assets/imgs/quiz_preview.png)
