@@ -249,6 +249,7 @@ label{
  .js-code-style{
     padding: 0.75rem;
     max-width: 700px;
+    tab-size: 1rem;
     overflow: auto;
  }
  summary{
