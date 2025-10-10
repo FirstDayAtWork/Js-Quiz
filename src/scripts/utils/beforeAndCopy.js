@@ -33,6 +33,6 @@ export function setBeforeAndCopyForCodeBlock(code, wrapper, icon, counter){
             const copyBtnid = document.getElementById(`copyBtn-${counter}`)
             copyBtnid.style.anchorName = `--anchor-el-${counter}`
             const popoverId = document.getElementById(`mypopover-${counter}`)
-            popoverId.style.positionAnchor = `--anchor-el-${counter}`
-            popoverId.style.insetArea = `left`
+            popoverId.style.positionAnchor = `--anchor-el-${counter}`;
+            popoverId.style.positionArea = "left";
 }

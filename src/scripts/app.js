@@ -11,13 +11,6 @@ const main = document.querySelector('.main')
 const nextBtn = document.getElementById('next-q-btn')
 const questionCounter = document.querySelector('.question-counter')
 
-// start app
-;(() => {
-    const preference = getLocalStorageData('preference')
-    if(!preference){ return window.location.replace(`/`) }
-    startQuiz(preference)
-})();
-
 async function getLocalQuizData(preference){
     let arr = []
     const part = preference.language === 'ru' ? [8,9] : [9, 10]
@@ -69,8 +62,7 @@ async function startQuiz(preference){
     let count = 0
     let userScoreArr = []
     let res = 0
-    // generateQuizQuestion(arr, 58, userScoreArr)
-    // Swap elements in Array v2
+
     for (let i = arr.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -84,7 +76,7 @@ async function startQuiz(preference){
         }
         const inputs = document.querySelectorAll('.answer-style')
         for(const elem of inputs){
-            // do something when input is checked
+
             if(elem.checked){
                 main.innerHTML = `
                 <div class="quiz-wrapper">
@@ -256,7 +248,6 @@ function generateQuizQuestion(arr, num, userScoreArr, language){
     }
     main.append(quizWrapper)
 
-    // add click to inputs
     const rightAnswer = arr[num].rightAnswer
     const inputs = document.querySelectorAll('.answer-style')
     inputs.forEach(el => el.addEventListener('change', (e) => {
@@ -285,7 +276,6 @@ function generateQuizQuestion(arr, num, userScoreArr, language){
         })
     )
 
-    // scroll to answer / back to question
     details.addEventListener("toggle", (event) => {
         if (details.open) {
             details.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" })
@@ -299,3 +289,9 @@ function generateQuizQuestion(arr, num, userScoreArr, language){
 function delBr(node){
     node.innerHTML = node.innerHTML.replace(/^(<br>){1,5}|(<br>){1,5}$/g, '')
 }
+
+;(() => {
+    const preference = getLocalStorageData('preference')
+    if(!preference){ return window.location.replace(`/`) }
+    startQuiz(preference)
+})();
